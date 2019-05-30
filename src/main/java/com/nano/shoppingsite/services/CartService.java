@@ -40,7 +40,6 @@ public class CartService {
 		Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ElementNotFoundException(" CartId: "+cartId.toString()));
 		Product prod = productRepository.findById(productId).orElseThrow(()->new ElementNotFoundException(" ProductId: "+productId));
 		CartItem cartItem = new CartItem(prod,cart,quantity);
-		cartItemRepository.save(cartItem);
 		Set<CartItem> list = cart.getCartItems();
 		list.add(cartItem);
 		cart.setCartItems(list);
@@ -60,5 +59,11 @@ public class CartService {
 		list.remove(cartItem);
 		cart.setCartItems(list);
 		cartRepository.save(cart);
+	}
+	
+	public void changeQuantityOfCartItem(Long cartId, Long cartItemId, Integer quantity) {
+		CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(()->new ElementNotFoundException(" CartItemId: "+cartItemId));
+		cartItem.setQuantity(quantity);
+		cartItemRepository.save(cartItem);
 	}
 }

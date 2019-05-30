@@ -42,7 +42,7 @@ public class ProductController {
 		return ResponseEntity.ok().body(productService.getFlightProducts());
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/product/product", produces={MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(method=RequestMethod.GET, value="/product/activity", produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<List<Product>> getActivityProducts(){
 		return ResponseEntity.ok().body(productService.getActivityProducts());
 	}

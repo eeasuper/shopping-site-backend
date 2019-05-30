@@ -35,7 +35,7 @@ public class SiteUser {
 		this.password = password;
 		this.email = email;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -74,6 +74,6 @@ public class SiteUser {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
+	}	
 	
 }
