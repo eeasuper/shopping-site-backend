@@ -26,6 +26,19 @@ public class Cart {
 		
 	}
 	
+	public Cart(long id, Set<CartItem> cartItems, SiteUser user) {
+		super();
+		this.id = id;
+		this.cartItems = cartItems;
+		this.user = user;
+	}
+
+	public Cart(long id, Set<CartItem> cartItems) {
+		super();
+		this.id = id;
+		this.cartItems = cartItems;
+	}
+
 	public Cart(SiteUser user) {
 		super();
 		this.user = user;

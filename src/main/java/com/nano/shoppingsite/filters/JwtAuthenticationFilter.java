@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter implements Filter{
 	private UserRepository userRepository;
 	
 	private static final List<String> urlsNotRequiringAuth = new ArrayList<String>(
-		Arrays.asList("/login","/register","/h2-console.*","/product\\/[a-z]*","/product\\/[0-9]*","/product\\/[0-9]*\\/thumbnail","/search\\/[a-z]*")
+		Arrays.asList("\\/login","\\/register","\\/h2-console.*","\\/error","\\/product\\/([a-z]*[0-9]*)*","\\/product\\/[0-9]*\\/thumbnail","\\/search\\/([a-z]*[0-9]*)*")
 	);
 	
 	private static boolean isAuthNotRequired(String uri) {
@@ -49,9 +49,9 @@ public class JwtAuthenticationFilter implements Filter{
 	    if(!isAuthNotRequired(uri)) {
 		    Authentication authentication = JwtService
 		    		.getAuthentication((HttpServletRequest) servletRequest);
-		    System.out.println(authentication);
 		    if(authentication != null) {
 		    	boolean exists = userRepository.existsByUsername(authentication.getName());
+		    	System.out.println(exists);
 			    if(exists) {
 			 	    SecurityContextHolder.getContext().setAuthentication(authentication);
 			    }

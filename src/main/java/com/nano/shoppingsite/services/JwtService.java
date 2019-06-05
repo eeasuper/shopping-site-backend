@@ -48,6 +48,7 @@ public class JwtService {
 	
 	public static Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
+        System.out.println(token);
         if (token != null) {
             String username = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody()
                     .getSubject();

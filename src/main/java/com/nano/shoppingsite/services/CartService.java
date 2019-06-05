@@ -1,8 +1,13 @@
 package com.nano.shoppingsite.services;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.nano.shoppingsite.exceptions.ElementNotFoundException;
@@ -36,10 +41,14 @@ public class CartService {
 		return cartRepository.findByUser(user);
 	}
 	
-	public Cart addItemToCart(Long cartId, Long productId, Integer quantity) {
+	public Cart addItemToCart(Long cartId, Long productId, Integer quantity,HttpServletResponse res) throws IOException {
 		Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ElementNotFoundException(" CartId: "+cartId.toString()));
 		Product prod = productRepository.findById(productId).orElseThrow(()->new ElementNotFoundException(" ProductId: "+productId));
-		CartItem cartItem = new CartItem(prod,cart,quantity);
+		if(cartItemRepository.existsByProductAndShoppingCart(prod, cart)) {
+			res.sendError(409, "Item in cart already exists.");
+			return null;
+		}
+		CartItem cartItem = new CartItem(prod,cart,quantity,new Date().getTime());
 		Set<CartItem> list = cart.getCartItems();
 		list.add(cartItem);
 		cart.setCartItems(list);
@@ -53,17 +62,32 @@ public class CartService {
 	
 	public void deleteItemFromCart(Long cartId, Long cartItemId) {
 		Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ElementNotFoundException(" CartId: "+cartId.toString()));
-		CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(()->new ElementNotFoundException(" CartItemId: "+cartItemId));
-		cartItemRepository.delete(cartItem);
-		Set<CartItem> list = cart.getCartItems();
-		list.remove(cartItem);
-		cart.setCartItems(list);
-		cartRepository.save(cart);
+		CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(()->new ElementNotFoundException("CartItemId: "+cartItemId));
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		SiteUser user = userRepository.findByUsername(username).orElseThrow(()->new ElementNotFoundException("username: "+username));
+		if(!cart.getUser().equals(user)) {
+			return;
+		}else if(cart.getUser().equals(user)) {
+			cartItemRepository.delete(cartItem);
+			Set<CartItem> list = cart.getCartItems();
+			list.remove(cartItem);
+			cart.setCartItems(list);
+			cartRepository.save(cart);
+		}
 	}
 	
-	public void changeQuantityOfCartItem(Long cartId, Long cartItemId, Integer quantity) {
+	public CartItem changeQuantityOfCartItem(Long cartId, Long cartItemId, Integer quantity) {
 		CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(()->new ElementNotFoundException(" CartItemId: "+cartItemId));
-		cartItem.setQuantity(quantity);
-		cartItemRepository.save(cartItem);
+		if(cartItem.getQuantity() != quantity) {
+			cartItem.setQuantity(quantity);
+			return cartItemRepository.save(cartItem);
+		}
+		return cartItem;
 	}
+	
+//	public Cart updateCart(Cart newCart) {
+//		Cart cart = cartRepository.findById(newCart.getId()).orElseThrow(()->new ElementNotFoundException(" CartId: "+newCart.getId()));
+//		cart.setCartItems(newCart.getCartItems());
+//		return cartRepository.save(cart);
+//	}
 }

@@ -1,5 +1,7 @@
 package com.nano.shoppingsite.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,12 +17,13 @@ public class CartItem {
 
 	private @Id @GeneratedValue(strategy=GenerationType.SEQUENCE) @Column(name="cart_item_id") long id;
     @ManyToOne
-    private Product product;
+    private @JoinColumn(nullable=false) Product product;
     @ManyToOne
     @JoinColumn(name="cart_id",nullable=false)
 	@JsonIgnore
     private Cart shoppingCart;
     private int quantity;
+    private @Column(nullable=false) Long addedDate;
     
     public CartItem() {
     	
@@ -32,11 +35,12 @@ public class CartItem {
 		this.quantity = quantity;
     }
     
-	public CartItem(Product product, Cart shoppingCart, int quantity) {
+	public CartItem(Product product, Cart shoppingCart, int quantity, Long addedDate) {
 		super();
 		this.product = product;
 		this.shoppingCart = shoppingCart;
 		this.quantity = quantity;
+		this.addedDate = addedDate;
 	}
 
 	public long getId() {
@@ -69,6 +73,14 @@ public class CartItem {
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+
+	public Long getAddedDate() {
+		return addedDate;
+	}
+
+	public void setAddedDate(Long addedDate) {
+		this.addedDate = addedDate;
 	}
     
     

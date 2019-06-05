@@ -1,5 +1,9 @@
 package com.nano.shoppingsite.controllers;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nano.shoppingsite.models.Cart;
+import com.nano.shoppingsite.models.CartItem;
 import com.nano.shoppingsite.services.CartService;
 import com.nano.shoppingsite.services.JwtService;
 
@@ -33,8 +38,8 @@ public class CartController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/cart/{id}/{productId}/{quantity}", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Cart> addItemToCart(@PathVariable("id") Long cartId,@PathVariable("productId") Long productId,@PathVariable("quantity") Integer quantity){
-		Cart cart = cartService.addItemToCart(cartId,productId,quantity);
+	public ResponseEntity<Cart> addItemToCart(@PathVariable("id") Long cartId,@PathVariable("productId") Long productId,@PathVariable("quantity") Integer quantity,HttpServletResponse res) throws IOException{
+		Cart cart = cartService.addItemToCart(cartId,productId,quantity,res);
 		return ResponseEntity.status(HttpStatus.CREATED).body(cart);
 	}
 	
@@ -51,9 +56,15 @@ public class CartController {
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT, value="/cart/{id}/{cartItemId}/{quantity}", produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Cart> changeQuantityOfCartItem(@PathVariable("id") Long cartId, @PathVariable("cartItemId")Long cartItemId, @PathVariable("quantity") Integer quantity){
-			cartService.changeQuantityOfCartItem(cartId,cartItemId,quantity);
-			return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<CartItem> changeQuantityOfCartItem(@PathVariable("id") Long cartId, @PathVariable("cartItemId")Long cartItemId, @PathVariable("quantity") Integer quantity){
+			CartItem cartItem = cartService.changeQuantityOfCartItem(cartId,cartItemId,quantity);
+			return ResponseEntity.status(HttpStatus.CREATED).body(cartItem);
 	}
+	
+//	@RequestMapping(method=RequestMethod.PUT, value="/cart/{id}", produces={MediaType.APPLICATION_JSON_VALUE})
+//	public ResponseEntity<Cart> updateCart(@PathVariable("id") Long cartId, @RequestBody Cart newCart){
+//		Cart cart =cartService.updateCart(newCart);
+//		return ResponseEntity.status(HttpStatus.CREATED).body(cart);
+//	}
 	
 }

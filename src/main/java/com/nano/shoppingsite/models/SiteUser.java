@@ -18,15 +18,21 @@ public class SiteUser {
 	
 	public SiteUser(){
 	}
-
+	
+	public SiteUser(String email, String password) {
+		super();
+		this.email = email;
+		this.password = password;
+	}
+	
 	public SiteUser(String username) {
 		this.username = username;
 	}
 
-	public SiteUser(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
+//	public SiteUser(String username, String password) {
+//		this.username = username;
+//		this.password = password;
+//	}
 	
 	public SiteUser(String name, String username, String password, String email) {
 		super();
