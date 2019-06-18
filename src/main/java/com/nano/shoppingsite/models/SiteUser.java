@@ -28,11 +28,6 @@ public class SiteUser {
 	public SiteUser(String username) {
 		this.username = username;
 	}
-
-//	public SiteUser(String username, String password) {
-//		this.username = username;
-//		this.password = password;
-//	}
 	
 	public SiteUser(String name, String username, String password, String email) {
 		super();
@@ -41,7 +36,16 @@ public class SiteUser {
 		this.password = password;
 		this.email = email;
 	}
-
+	
+	public SiteUser(Long id, String name, String username, String password, String email) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.username = username;
+		this.password = password;
+		this.email = email;
+	}
+	
 	public Long getId() {
 		return id;
 	}

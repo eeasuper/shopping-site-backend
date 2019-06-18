@@ -25,12 +25,6 @@ import com.nano.shoppingsite.filters.JwtAuthenticationFilter;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
-//	public UserRepository repository;
-//	
-//	WebSecurityConfig(UserRepository repository){
-//		this.repository = repository;
-//	}
-	
 	@Autowired
 	JwtAuthenticationFilter jwtAuthenticationFilter;
 	@Autowired
@@ -66,11 +60,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 
     }
     
+    String frontEndDomain = "http://localhost:3000";
+    
     @Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
 		List<String> originList = new ArrayList<String>(
-				Arrays.asList("http://localhost:3000"));
+				Arrays.asList(frontEndDomain));
 		configuration.setAllowedOrigins(originList);
 		List<String> list = new ArrayList<String>(
 				Arrays.asList("*"));

@@ -20,11 +20,12 @@ public class UserService {
 	@Autowired
 	UserRepository repository;
 	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
 	CartRepository cartRepository;
 	@Autowired
 	JwtService jwtService;
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+
 	
 	private String validate(SiteUser user) {
 		String nameRegex = "^[\\w][^\\s]{1,}$";
