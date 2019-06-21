@@ -34,18 +34,16 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE})
 	ResponseEntity<?> loginUser(@RequestBody SiteUser newUser, HttpServletResponse res) throws URISyntaxException{
 		SiteUser user = userService.loginUser(newUser.getEmail(), newUser.getPassword(), res);
-		int status = res.getStatus();
 		
-		if(status == 201 || status == 200) {
-			return ResponseEntity.status(HttpStatus.CREATED).body(user);
-		}else {
-			return ResponseEntity.status(status).build();
-		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(user);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/user/{id}",  produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<SiteUser> getOneUser(@PathVariable("id") Long id) {
 		SiteUser user = userService.getOneUser(id);
+		if(user==null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 		return ResponseEntity.ok(user);
 	}
 }

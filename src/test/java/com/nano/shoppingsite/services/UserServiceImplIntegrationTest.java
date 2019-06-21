@@ -16,9 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.nano.shoppingsite.configurations.MyUserPrincipal;
 import com.nano.shoppingsite.models.SiteUser;
 import com.nano.shoppingsite.repositories.CartRepository;
 import com.nano.shoppingsite.repositories.UserRepository;
@@ -55,24 +59,24 @@ public class UserServiceImplIntegrationTest {
 	@Before
 	public void setUp() {
 		SiteUser user = new SiteUser(11L, "testname","testUsername",passwordEncoder.encode("1234"),"test@test.com");
-		user.setId(11L);
 		
 		Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 		Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 	}
 	
 	@Test
-	public void whenRegisterUser_thenNewUserShouldBeEqualToRequestedUser() throws IOException {
-		SiteUser user = new SiteUser("testname","testUsername","1234","test@test.com");
+	public void whenRegisterUser_thenNewUserShouldBeFound() throws IOException {
+		SiteUser user = new SiteUser("testname","testUsername","12345678","test@test.com");
 		HttpServletResponse res = mock(HttpServletResponse.class);
 		
 		SiteUser savedUser = userService.registerUser(user,res);
 		
+		//I think this should improved.
 		assertThat(savedUser).isEqualTo(user);
 	}
 	
 	@Test
-	public void whenLoginUser_thenReturnedUserIdShouldBeEqualToRequestedUserId() {
+	public void whenLoginUser_thenLoggedInUserShouldBeFound() {
 		SiteUser user = new SiteUser(11L, "testname","testUsername",passwordEncoder.encode("1234"),"test@test.com");
 		HttpServletResponse res = mock(HttpServletResponse.class);
 		
@@ -82,8 +86,13 @@ public class UserServiceImplIntegrationTest {
 	}
 	
 	@Test
-	public void whenGetOneUser_thenReturnRequestedUser() {
+	public void whenGetOneUser_thenRequestedUserShouldBeFound() {
 		SiteUser user = new SiteUser(11L, "testname","testUsername",passwordEncoder.encode("1234"),"test@test.com");
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(authentication.getPrincipal()).thenReturn(new MyUserPrincipal(user));
 		
 		SiteUser requestedUser = userService.getOneUser(user.getId());
 		

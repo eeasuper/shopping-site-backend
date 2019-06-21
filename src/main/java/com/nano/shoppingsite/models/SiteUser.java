@@ -1,5 +1,6 @@
 package com.nano.shoppingsite.models;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class SiteUser {
 	private @Id @GeneratedValue(strategy=GenerationType.SEQUENCE) @Column(name="user_id") long id;
@@ -15,6 +18,9 @@ public class SiteUser {
 	private @Column(nullable=false) String username;
 	private @Column(nullable=false) String password;
 	private @Column(nullable=false) String email;
+	
+	//add nullable=false later.
+	private @OneToOne(mappedBy="user",cascade=CascadeType.ALL)@JsonIgnore Cart cart;
 	
 	public SiteUser(){
 	}
@@ -29,6 +35,13 @@ public class SiteUser {
 		this.username = username;
 	}
 	
+	//This constructor is for creating a SiteUser in JwtService.class
+	public SiteUser(long id, String username) {
+		super();
+		this.id = id;
+		this.username = username;
+	}
+
 	public SiteUser(String name, String username, String password, String email) {
 		super();
 		this.name = name;
@@ -84,6 +97,14 @@ public class SiteUser {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}	
+	}
+
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
 	
 }

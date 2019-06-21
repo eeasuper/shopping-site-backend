@@ -110,8 +110,7 @@ public class DatabaseInit {
     				new HashSet<>(Arrays.asList("Unique hollow and flared design maximizes comfort, especially during sleep", "Ultimate comfort for women: softer, smaller, silky smooth and contoured"))
     			);
     		productRepository.save(dreamgirlSoftPlug);
-    		Cart cart1 = cartRepository.save(new Cart());
-    		cart1.setUser(user1);
+    		Cart cart1 = cartRepository.save(new Cart(user1));
     		CartItem cartItem1 = cartItemRepository.save(new CartItem(siliconePlug,cart1,1,new Date().getTime()));
     		CartItem cartItem2 = cartItemRepository.save(new CartItem(acousticPlug,cart1,2,new Date().getTime()));
     		cart1.setCartItems(new HashSet<>(Arrays.asList(cartItem1,cartItem2)));

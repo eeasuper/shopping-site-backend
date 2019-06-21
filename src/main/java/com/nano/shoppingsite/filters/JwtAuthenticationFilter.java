@@ -51,7 +51,6 @@ public class JwtAuthenticationFilter implements Filter{
 		    		.getAuthentication((HttpServletRequest) servletRequest);
 		    if(authentication != null) {
 		    	boolean exists = userRepository.existsByUsername(authentication.getName());
-		    	System.out.println(exists);
 			    if(exists) {
 			 	    SecurityContextHolder.getContext().setAuthentication(authentication);
 			    }

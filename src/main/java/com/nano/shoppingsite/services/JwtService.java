@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.nano.shoppingsite.configurations.MyUserPrincipal;
+import com.nano.shoppingsite.models.SiteUser;
 import com.nano.shoppingsite.repositories.UserRepository;
 
 import io.jsonwebtoken.Claims;
@@ -48,12 +50,26 @@ public class JwtService {
 	
 	public static Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
-        System.out.println(token);
+        
         if (token != null) {
             String username = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody()
                     .getSubject();
-            return username != null ? new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()) : null;
+            Integer test = (Integer) Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody().get("usr_id");
+            SiteUser user = new SiteUser((long) test, username);
+            MyUserPrincipal principal = new MyUserPrincipal(user);
+            return username != null ? new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList()) : null;
         }
         return null;
     }
+	
+	public static String createToken(String username, Long userId) {
+		Claims userClaim = Jwts.claims();
+    	userClaim.put("usr_id", userId);
+    	userClaim.put("sub", username);
+        String JWT = Jwts.builder()
+        		.setClaims(userClaim)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET).compact();
+		return JWT;
+	}
 }

@@ -6,20 +6,31 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name="cart")
 public class Cart {
-	private @Id @GeneratedValue(strategy=GenerationType.SEQUENCE) @Column(name="cart_id")long id;
+	
+	@Id 
+	@Column(name="cart_id")
+	@GeneratedValue(generator="gen") 
+	@GenericGenerator(name="gen", strategy="foreign",parameters=@Parameter(name="property",value="user"))
+	private long id;
+	
 	@OneToMany(mappedBy="shoppingCart",cascade=CascadeType.ALL)
 
     private Set<CartItem> cartItems;
+	
 	@OneToOne
+	@PrimaryKeyJoinColumn
 	private SiteUser user;
 	
 	public Cart() {

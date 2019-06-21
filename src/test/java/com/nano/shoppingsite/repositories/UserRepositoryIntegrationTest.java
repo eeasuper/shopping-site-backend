@@ -41,7 +41,6 @@ public class UserRepositoryIntegrationTest {
 	
 	@Test
 	public void whenExistsByEmail_thenReturnBoolean() {
-//		SiteUser user = new SiteUser("test@test.com",passwordEncoder.encode("1234"));
 		SiteUser user = new SiteUser("testname","testUsername","1234","test@test.com");
 		entityManager.persist(user);
 		entityManager.flush();
@@ -53,7 +52,6 @@ public class UserRepositoryIntegrationTest {
 	
 	@Test
 	public void whenFindByEmail_thenReturnSiteUser() {
-//		SiteUser user = new SiteUser("test@test.com",passwordEncoder.encode("1234"));
 		SiteUser user = new SiteUser("testname","testUsername","1234","test@test.com");
 		entityManager.persist(user);
 		entityManager.flush();

@@ -42,7 +42,16 @@ public class CartItem {
 		this.quantity = quantity;
 		this.addedDate = addedDate;
 	}
-
+	
+	public CartItem(Long id,Product product, Cart shoppingCart, int quantity, Long addedDate) {
+		super();
+		this.id = id;
+		this.product = product;
+		this.shoppingCart = shoppingCart;
+		this.quantity = quantity;
+		this.addedDate = addedDate;
+	}
+	
 	public long getId() {
 		return id;
 	}

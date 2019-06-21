@@ -5,9 +5,11 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.nano.shoppingsite.configurations.MyUserPrincipal;
 import com.nano.shoppingsite.exceptions.ElementNotFoundException;
 import com.nano.shoppingsite.models.Cart;
 import com.nano.shoppingsite.models.SiteUser;
@@ -57,9 +59,9 @@ public class UserService {
 	public SiteUser registerUser(SiteUser user,HttpServletResponse res) throws IOException {
 		jwtService.setAuthentication(user.getId(), user.getUsername(), user.getPassword(),res);
 		String encryptedPassword = this.passwordEncoder.encode(user.getPassword());
+		String validation = validate(user);
 		user.setPassword(encryptedPassword);
 		Cart cart = new Cart(user);
-		String validation = validate(user);
 		if(validation == "true") {
 			repository.save(user);
 			cartRepository.save(cart);
@@ -76,11 +78,10 @@ public class UserService {
 		boolean matches = this.passwordEncoder.matches(password, user.getPassword());
 		
 		if(!matches) {
-			System.out.println("credentials error");
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return user;
 		}
-		//does password inside spring token have to be encoded?
+		//does password inside spring token have to be encoded? NO.
 		if(matches) {
 			jwtService.setAuthentication(user.getId(), user.getUsername(), password,res);
 		}
@@ -89,6 +90,12 @@ public class UserService {
 	}
 	
 	public SiteUser getOneUser(Long userId) {
+		MyUserPrincipal userPrincipal = (MyUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if(userPrincipal.getId() != userId) {
+			return null;
+		}
+		
 		SiteUser user = repository.findById(userId).orElseThrow(()->new ElementNotFoundException("UserId: "+userId));
 		return user;
 	}
